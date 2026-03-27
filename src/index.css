@@ -1,0 +1,271 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+/* Report Table Styling */
+.report-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.875rem;
+  background-color: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.report-content th {
+  background-color: #f9fafb;
+  color: #111827;
+  font-weight: 600;
+  text-align: left;
+  padding: 0.75rem 1rem;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.report-content td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #f3f4f6;
+  color: #374151;
+}
+
+.report-content tr:last-child td {
+  border-bottom: none;
+}
+
+.report-content tr:hover td {
+  background-color: #f9fafb;
+}
+
+.report-content .data-table {
+  overflow-x: auto;
+  margin: 1rem 0;
+}
+
+/* Chart Wrapper */
+.chart-wrapper {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  border: 1px solid #f3f4f6;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  margin: 2rem 0;
+}
+
+/* Report Template Styles */
+.report-container {
+  font-family: var(--font-sans);
+  color: #1a1a1a;
+  line-height: 1.6;
+}
+
+.report-header {
+  border-bottom: 2px solid #e5e7eb;
+  padding-bottom: 2rem;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.report-header h1 {
+  @apply text-4xl font-bold mb-2 text-gray-900;
+  font-family: 'Georgia', serif;
+}
+
+.report-meta {
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+.report-section {
+  margin-bottom: 2.5rem;
+}
+
+.report-section h2 {
+  @apply text-2xl font-bold mb-4 text-gray-800 border-l-4 border-blue-600 pl-4;
+  font-family: 'Georgia', serif;
+}
+
+.report-section .content {
+  background: #f9fafb;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  border: 1px solid #f3f4f6;
+}
+
+.report-footer {
+  border-top: 1px solid #e5e7eb;
+  padding-top: 1.5rem;
+  margin-top: 3rem;
+  text-align: center;
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+.report-content table {
+  @apply w-full border-collapse my-4 border border-gray-200;
+}
+
+.report-content th, .report-content td {
+  @apply p-3 border border-gray-200 text-left;
+}
+
+.report-content th {
+  @apply bg-gray-50 font-bold text-gray-900;
+}
+
+/* Print Styles */
+.print-only-container {
+  position: absolute;
+  left: -9999px;
+  top: -9999px;
+  width: 1024px; /* Fixed width for consistent print layout */
+  background: white;
+  visibility: hidden;
+  opacity: 0;
+}
+
+/* Show it briefly before print to let Recharts calculate dimensions */
+body.is-printing .print-only-container {
+  visibility: visible;
+  opacity: 0.01; /* Almost invisible but rendered */
+}
+
+@media print {
+  @page {
+    margin: 1.5cm;
+    size: A4 portrait;
+  }
+
+  body {
+    background: white !important;
+    color: black !important;
+  }
+
+  /* Hide everything except the final report */
+  body * {
+    visibility: hidden !important;
+  }
+
+  .print-only-container,
+  .print-only-container * {
+    visibility: visible !important;
+  }
+
+  .print-only-container {
+    position: static !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    visibility: visible !important;
+    display: block !important;
+  }
+
+  .report-content {
+    font-size: 11pt;
+    line-height: 1.5;
+  }
+
+  .report-content h1, 
+  .report-content h2, 
+  .report-content h3 {
+    page-break-after: avoid;
+    color: black !important;
+  }
+
+  .report-content p, 
+  .report-content ul, 
+  .report-content table {
+    page-break-inside: auto;
+  }
+
+  .report-content tr {
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
+
+  /* Force background colors in print */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Page break rules */
+  .bg-white.p-6.rounded-2xl {
+    page-break-inside: avoid !important;
+    margin-bottom: 2rem !important;
+  }
+}
+
+/* Mermaid Diagram Styling */
+.mermaid-container {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  border: 1px solid #f3f4f6;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  margin: 2rem 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.mermaid-diagram {
+  display: none; /* Hidden because we replace it with an image */
+}
+
+/* Technical Findings Styles */
+.prose h3 {
+  @apply text-lg font-bold text-gray-900 mt-6 mb-3 flex items-center gap-2;
+}
+
+.prose p {
+  @apply text-gray-700 leading-relaxed mb-4;
+}
+
+.prose ul {
+  @apply list-disc pl-5 mb-4 space-y-2 text-gray-700;
+}
+
+.prose li {
+  @apply leading-relaxed;
+}
+
+.prose strong {
+  @apply font-semibold text-gray-900;
+}
+
+/* Markdown Table Styles */
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.prose th {
+  background-color: #f8fafc;
+  font-weight: 700;
+  text-align: left;
+  padding: 0.75rem 1rem;
+  border: 1px solid #e2e8f0;
+  color: #1e293b;
+}
+
+.prose td {
+  padding: 0.75rem 1rem;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+}
+
+.prose tr:nth-child(even) {
+  background-color: #f1f5f9;
+}
+
+.prose tr:hover {
+  background-color: #f1f5f9;
+}

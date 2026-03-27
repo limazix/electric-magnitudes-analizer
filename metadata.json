@@ -1,0 +1,5 @@
+{
+  "name": "Avaliador de Magnitudes Elétricas",
+  "description": "Sistema especializado na análise de qualidade de energia e magnitudes elétricas baseado em normas da ANEEL e dados do analisador PowerNET PQ-600 G4.",
+  "requestFramePermissions": []
+}

@@ -1,0 +1,164 @@
+{
+  "entities": {
+    "User": {
+      "title": "User Profile",
+      "description": "Information about the authenticated user.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "displayName": { "type": "string" },
+        "photoURL": { "type": "string" },
+        "role": { "type": "string", "enum": ["user", "admin"] }
+      },
+      "required": ["uid", "email"]
+    },
+    "Analysis": {
+      "title": "Electrical Analysis",
+      "description": "A record of a single analysis session.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "status": { "type": "string", "enum": ["pending", "processing", "completed", "failed"] },
+        "progress": { "type": "number" },
+        "fileName": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "results": { "type": "object" },
+        "reportUrl": { "type": "string" }
+      },
+      "required": ["userId", "status", "createdAt"]
+    },
+    "Conversation": {
+      "title": "Agent Conversation",
+      "description": "Messages between the user and the system agents.",
+      "type": "object",
+      "properties": {
+        "analysisId": { "type": "string" },
+        "messages": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "role": { "type": "string", "enum": ["user", "assistant", "system"] },
+              "agent": { "type": "string" },
+              "content": { "type": "string" },
+              "timestamp": { "type": "string", "format": "date-time" }
+            }
+          }
+        }
+      }
+    },
+    "UserPreference": {
+      "title": "User Preference",
+      "description": "User preferences stored as text and embeddings for RAG.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "content": { "type": "string" },
+        "embedding": { "type": "array", "items": { "type": "number" } },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "content", "embedding", "createdAt"]
+    },
+    "Regulation": {
+      "title": "ANEEL Regulation",
+      "description": "Stored knowledge about ANEEL regulations and PRODIST modules.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "content": { "type": "string" },
+        "module": { "type": "string" },
+        "embedding": { "type": "array", "items": { "type": "number" } },
+        "sourceUrl": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "content", "embedding", "createdAt"]
+    },
+    "PendingRegulation": {
+      "title": "Pending ANEEL Regulation",
+      "description": "Raw text scraped from ANEEL, waiting for embedding.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "content": { "type": "string" },
+        "link": { "type": "string" },
+        "date": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "content", "createdAt"]
+    },
+    "CriticEvaluation": {
+      "title": "Critic Evaluation",
+      "description": "Feedback from the critic agent stored for RAG.",
+      "type": "object",
+      "properties": {
+        "reportContext": { "type": "string" },
+        "critique": { "type": "string" },
+        "score": { "type": "number" },
+        "embedding": { "type": "array", "items": { "type": "number" } },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["reportContext", "critique", "score", "embedding", "createdAt"]
+    },
+    "SystemStatus": {
+      "title": "System Status",
+      "description": "Global system status indicators.",
+      "type": "object",
+      "properties": {
+        "lastSync": { "type": "string", "format": "date-time" },
+        "status": { "type": "string", "enum": ["success", "error"] },
+        "errorMessage": { "type": "string" }
+      }
+    },
+    "AnalysisCache": {
+      "title": "Analysis Cache",
+      "description": "Cached results of AI agent analyses to improve performance.",
+      "type": "object",
+      "properties": {
+        "hash": { "type": "string" },
+        "results": { "type": "object" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["hash", "results", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profiles."
+    },
+    "/analyses/{analysisId}": {
+      "schema": "Analysis",
+      "description": "Electrical analysis records."
+    },
+    "/conversations/{analysisId}": {
+      "schema": "Conversation",
+      "description": "Conversation history for each analysis."
+    },
+    "/user_preferences/{preferenceId}": {
+      "schema": "UserPreference",
+      "description": "User preferences for RAG."
+    },
+    "/regulations/{regulationId}": {
+      "schema": "Regulation",
+      "description": "Knowledge base of ANEEL regulations."
+    },
+    "/pending_regulations/{id}": {
+      "schema": "PendingRegulation",
+      "description": "Raw text scraped from ANEEL, waiting for embedding."
+    },
+    "/critic_evaluations/{id}": {
+      "schema": "CriticEvaluation",
+      "description": "Critic evaluations for RAG."
+    },
+    "/system/status": {
+      "schema": "SystemStatus",
+      "description": "Global system status indicators."
+    },
+    "/analysis_cache/{id}": {
+      "schema": "AnalysisCache",
+      "description": "Cached analysis results."
+    }
+  }
+}
