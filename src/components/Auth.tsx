@@ -3,14 +3,18 @@ import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { auth } from "../firebase";
 import { LogIn, Zap } from "lucide-react";
 import { motion } from "motion/react";
+import { toast } from "sonner";
 
 const Auth: React.FC = () => {
   const handleLogin = async () => {
     const provider = new GoogleAuthProvider();
+    const toastId = toast.loading("Autenticando...");
     try {
       await signInWithPopup(auth, provider);
+      toast.success("Login realizado com sucesso!", { id: toastId });
     } catch (error) {
       console.error("Erro ao fazer login:", error);
+      toast.error("Erro ao realizar login.", { id: toastId });
     }
   };
 

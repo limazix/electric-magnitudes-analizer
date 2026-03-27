@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { auth, db } from "../firebase";
 import { LogOut, Zap, User, Wifi, WifiOff } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
+import { toast } from "sonner";
 
 const Header: React.FC = () => {
   const user = auth.currentUser;
@@ -9,8 +10,14 @@ const Header: React.FC = () => {
 
   useEffect(() => {
     // Monitor browser online status
-    const handleOnline = () => setIsOnline(true);
-    const handleOffline = () => setIsOnline(false);
+    const handleOnline = () => {
+      setIsOnline(true);
+      toast.success("Conexão restabelecida!");
+    };
+    const handleOffline = () => {
+      setIsOnline(false);
+      toast.error("Você está offline. Verifique sua conexão.");
+    };
 
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
@@ -27,8 +34,10 @@ const Header: React.FC = () => {
   const handleLogout = async () => {
     try {
       await auth.signOut();
+      toast.success("Logout realizado com sucesso.");
     } catch (error) {
       console.error("Erro ao fazer logout:", error);
+      toast.error("Erro ao realizar logout.");
     }
   };
 

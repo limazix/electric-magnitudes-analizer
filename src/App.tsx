@@ -25,6 +25,7 @@ import { getRelevantRegulations, saveCriticEvaluation, getRelevantCriticEvaluati
 import { generateHash, getCachedAnalysis, setCachedAnalysis } from './services/cacheService';
 import Papa from 'papaparse';
 import { motion, AnimatePresence } from 'motion/react';
+import { Toaster, toast } from 'sonner';
 import { cn } from './lib/utils';
 import { getDocs, limit } from 'firebase/firestore';
 
@@ -35,6 +36,26 @@ export default function App() {
   const [history, setHistory] = useState<AnalysisRecord[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [lastStatus, setLastStatus] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (currentAnalysis && currentAnalysis.status !== lastStatus) {
+      const status = currentAnalysis.status;
+      const fileName = currentAnalysis.fileName;
+
+      if (status === 'processing') {
+        toast.loading(`Processando análise: ${fileName}`, { id: 'analysis-status' });
+      } else if (status === 'completed') {
+        toast.success(`Análise concluída: ${fileName}`, { id: 'analysis-status' });
+      } else if (status === 'failed') {
+        toast.error(`Falha na análise: ${fileName}`, { id: 'analysis-status' });
+      } else if (status === 'waiting_user') {
+        toast.info(`Aguardando feedback: ${fileName}`, { id: 'analysis-status' });
+      }
+      
+      setLastStatus(status);
+    }
+  }, [currentAnalysis?.status, currentAnalysis?.fileName, lastStatus]);
 
   useEffect(() => {
     // Seed default regulations on startup
@@ -142,6 +163,7 @@ export default function App() {
     const path = 'analyses';
     try {
       setError(null);
+      toast.info(`Lendo arquivo: ${file.name}`);
       
       Papa.parse(file, {
         complete: async (results) => {
@@ -460,6 +482,7 @@ export default function App() {
     if (!deletingId) return;
     try {
       await deleteDoc(doc(db, 'analyses', deletingId));
+      toast.success("Análise excluída com sucesso.");
       if (currentAnalysis?.id === deletingId) {
         setCurrentAnalysis(null);
       }
@@ -480,6 +503,7 @@ export default function App() {
     };
     console.error('Firestore Error:', JSON.stringify(errInfo));
     setError(`Erro de permissão no banco de dados (${operationType}).`);
+    toast.error(`Erro no banco de dados: ${operationType}`);
   }
 
   if (!isAuthReady) {
@@ -497,6 +521,7 @@ export default function App() {
   return (
     <ErrorBoundary>
       <div className="min-h-screen bg-gray-50 flex flex-col">
+        <Toaster position="top-right" richColors closeButton />
         <Header />
         
         <div className="flex flex-grow">

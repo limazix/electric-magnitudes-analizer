@@ -6,6 +6,7 @@ import { cn } from "../lib/utils";
 import { AnalysisRecord } from "../types";
 import { motion, AnimatePresence } from "motion/react";
 import { PowerQualityChart } from "./PowerQualityChart";
+import { toast } from "sonner";
 
 interface Props {
   analysis: AnalysisRecord;
@@ -40,6 +41,7 @@ const AnalysisDashboard: React.FC<Props> = ({ analysis, onDownloadReport, onProc
 
   const handleExportToGoogleDrive = async () => {
     setIsExporting(true);
+    const toastId = toast.loading("Exportando para o Google Drive...");
     try {
       // Get the report content - either the preview or the final completed one
       const reportHtml = analysis.status === 'completed' 
@@ -47,7 +49,8 @@ const AnalysisDashboard: React.FC<Props> = ({ analysis, onDownloadReport, onProc
         : analysis.htmlReport;
 
       if (!reportHtml) {
-        alert("Relatório não encontrado para exportação.");
+        toast.error("Relatório não encontrado para exportação.", { id: toastId });
+        setIsExporting(false);
         return;
       }
 
@@ -64,13 +67,16 @@ const AnalysisDashboard: React.FC<Props> = ({ analysis, onDownloadReport, onProc
 
       if (response.status === 401) {
         // Need to authenticate
+        toast.info("Autenticação necessária com o Google.", { id: toastId });
         const authResponse = await fetch("/api/auth/google/url");
         const authData = await authResponse.json();
         if (authData.error) {
-          alert(authData.error);
+          toast.error(authData.error, { id: toastId });
+          setIsExporting(false);
           return;
         }
         window.open(authData.url, "google_auth", "width=600,height=700");
+        setIsExporting(false);
         return;
       }
 
@@ -81,9 +87,10 @@ const AnalysisDashboard: React.FC<Props> = ({ analysis, onDownloadReport, onProc
 
       const data = await response.json();
       setExportLink(data.webViewLink);
+      toast.success("Relatório exportado com sucesso!", { id: toastId });
     } catch (error: any) {
       console.error("Export error:", error);
-      alert(`Erro ao exportar para o Google Drive: ${error.message}. Verifique sua conexão e tente novamente.`);
+      toast.error(`Erro ao exportar: ${error.message}`, { id: toastId });
     } finally {
       setIsExporting(false);
     }

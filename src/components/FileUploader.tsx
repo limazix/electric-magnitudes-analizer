@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { Upload, FileText, X, AlertCircle } from "lucide-react";
 import { cn } from "../lib/utils";
+import { toast } from "sonner";
 
 interface Props {
   onFileSelect: (file: File) => void;
@@ -32,8 +33,10 @@ const FileUploader: React.FC<Props> = ({ onFileSelect, disabled }) => {
       setSelectedFile(file);
       onFileSelect(file);
       setError(null);
+      toast.success(`Arquivo selecionado: ${file.name}`);
     } else {
       setError("Por favor, selecione um arquivo CSV válido.");
+      toast.error("Formato de arquivo inválido. Use .csv");
     }
   }, [disabled, onFileSelect]);
 
@@ -43,8 +46,10 @@ const FileUploader: React.FC<Props> = ({ onFileSelect, disabled }) => {
       setSelectedFile(file);
       onFileSelect(file);
       setError(null);
+      toast.success(`Arquivo selecionado: ${file.name}`);
     } else if (file) {
       setError("Por favor, selecione um arquivo CSV válido.");
+      toast.error("Formato de arquivo inválido. Use .csv");
     }
   }, [onFileSelect]);
 
