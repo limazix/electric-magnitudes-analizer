@@ -313,6 +313,46 @@ const AnalysisDashboard: React.FC<Props> = ({ analysis, onDownloadReport, onProc
     );
   };
 
+  const renderUnbalanceTable = () => {
+    if (!chartData?.unbalanceData || !Array.isArray(chartData.unbalanceData) || chartData.unbalanceData.length === 0) {
+      return null;
+    }
+
+    return (
+      <div className="mt-8 bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        <div className="p-6 border-b border-gray-50 bg-gray-50/50">
+          <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+            <AlertTriangle className="w-5 h-5 text-amber-500" />
+            Dados de Desequilíbrio de Tensão (DRC/DRP)
+          </h3>
+          <p className="text-sm text-gray-500 mt-1">
+            Detalhamento temporal dos indicadores de desequilíbrio resistivo e de fase.
+          </p>
+        </div>
+        <div className="overflow-x-auto max-h-[400px] overflow-y-auto">
+          <table className="w-full text-left border-collapse">
+            <thead className="sticky top-0 bg-gray-50 z-10">
+              <tr className="text-gray-600 text-xs uppercase tracking-wider">
+                <th className="px-6 py-4 font-bold border-b">Horário</th>
+                <th className="px-6 py-4 font-bold border-b">DRC (%)</th>
+                <th className="px-6 py-4 font-bold border-b">DRP (%)</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100">
+              {chartData.unbalanceData.map((row: any, i: number) => (
+                <tr key={i} className="hover:bg-blue-50/30 transition-colors">
+                  <td className="px-6 py-4 text-sm font-medium text-gray-900">{row.time}</td>
+                  <td className="px-6 py-4 text-sm text-gray-700">{typeof row.drc === 'number' ? row.drc.toFixed(2) : row.drc}%</td>
+                  <td className="px-6 py-4 text-sm text-gray-700">{typeof row.drp === 'number' ? row.drp.toFixed(2) : row.drp}%</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="w-full max-w-4xl mx-auto p-6 space-y-8">
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
@@ -480,6 +520,9 @@ const AnalysisDashboard: React.FC<Props> = ({ analysis, onDownloadReport, onProc
             );
           })}
         </div>
+
+        {/* Unbalance Data Table */}
+        {renderUnbalanceTable()}
 
         {/* Hidden Print Container - Always present to avoid "no document" errors */}
         <div 
