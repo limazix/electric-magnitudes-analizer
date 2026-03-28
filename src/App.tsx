@@ -58,11 +58,6 @@ export default function App() {
   }, [currentAnalysis?.status, currentAnalysis?.fileName, lastStatus]);
 
   useEffect(() => {
-    // Seed default regulations on startup
-    seedDefaultRegulations();
-  }, []);
-
-  useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setUser(user);
       setIsAuthReady(true);
@@ -83,6 +78,11 @@ export default function App() {
           });
         } else if (isAdminEmail && userSnap.data().role !== 'admin') {
           await updateDoc(userRef, { role: 'admin' });
+        }
+
+        // Seed default regulations only for the admin user
+        if (isAdminEmail) {
+          seedDefaultRegulations();
         }
       }
     });
